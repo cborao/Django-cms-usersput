@@ -15,7 +15,7 @@ form = """
 """
 
 
-def loggedIn(request):
+def logged_in(request):
 
     if request.user.is_authenticated:
         logged = "Logged in as " + request.user.username
@@ -30,13 +30,14 @@ def logout_view(request):
     return redirect("/cms/")
 
 
-def login_view(request):
+def login_view():
     return redirect("/login")
 
 
 @csrf_exempt
-def index(request):
+def index():
     return HttpResponse("You are in the root page.", status=200)
+
 
 @csrf_exempt
 def get_content(request, key):
