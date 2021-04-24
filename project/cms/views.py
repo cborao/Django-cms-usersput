@@ -43,6 +43,7 @@ def index(request):
 def get_content(request, key):
 
     if request.method == "POST" and request.user.is_authenticated:
+
         value = request.POST['value']
 
         try:
@@ -68,12 +69,20 @@ def get_content(request, key):
         content.save()
 
     try:
-        response = Content.objects.get(key=key).value
+        response = "Key '" + key + "' value is: " + Content.objects.get(key=key).value + "<br>"
         status = 200
-    except Content.DoesNotExist:
-        response = 'There is no content to the key:  ' + key + '\n'
         if request.user.is_authenticated:
-            response = response + form
+            response += "Logged in as " + request.user.username
+        else:
+            response += "Not logged in. <a href='/login'>Login</a>"
+
+    except Content.DoesNotExist:
+        response = 'There is no content for key: ' + key + '<br>'
+        if request.user.is_authenticated:
+            response += form + "Logged in as " + request.user.username
+        else:
+            response += "Not logged in. <a href='/login'>Login</a>"
+
         status = 404
 
     return HttpResponse(response, status=status)
