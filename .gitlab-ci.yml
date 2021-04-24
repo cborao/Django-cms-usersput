@@ -20,4 +20,4 @@ test:
 pep8:
   stage: analysis
   script:
-    - pycodestyle cms/views.py
+    - pycodestyle project/cms/views.py
