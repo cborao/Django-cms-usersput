@@ -1,0 +1,23 @@
+image: "python:3.8-slim"
+
+before_script:
+  - python3 --version
+
+stages:
+  - analysis
+  - test
+
+test:
+  stage: test
+  script:
+    - python3 -m venv venv/
+    - source venv/bin/activate
+    - pip install django
+    - python manage.py makemigrations
+    - python manage.py migrate
+    - python manage.py test
+
+pep8:
+  stage: analysis
+  script:
+    - pycodestyle cms/views.py
