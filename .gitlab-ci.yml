@@ -17,6 +17,7 @@ test:
     - python manage.py migrate
     - python manage.py test
 
+
 pep8:
   stage: analysis
   script:
