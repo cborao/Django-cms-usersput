@@ -1,29 +1,52 @@
-from django.shortcuts import render
 
-# Create your views here.
 from django.http import HttpResponse
 from .models import Content
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 
-formulario = """
-No existe valor en la base de datos para esta llave.
-<p>Introdúcela:
+form = """
+<p>Introduce content:
 <p>
 <form action="" method="POST">
-    Valor: <input type="text" name="valor">
+    Value: <input type="text" name="value">
     <br/><input type="submit" value="Submit">
 </form>
 """
 
 
+def loggedIn(request):
+
+    if request.user.is_authenticated:
+        logged = "Logged in as " + request.user.username
+    else:
+        logged = "Not logged in. <a href='/login'>Login via login</a>"
+
+    return HttpResponse(logged)
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("/cms/")
+
+
+def login_view(request):
+    return redirect("/login")
+
+
+@csrf_exempt
+def index(request):
+    return HttpResponse("You are in the root page.")
+
+
 @csrf_exempt
 def get_content(request, key):
 
-    if request.method == "POST":
-        value = request.POST['valor']
+    if request.method == "POST" and request.user.is_authenticated:
+        value = request.POST['value']
 
         try:
-            # if the shortened url have been stored in a previous POST, we
+            # if the key have been stored in a previous POST, we
             # remove it and add the new content.
             content = Content.objects.get(key=key)
             content.delete()
@@ -32,9 +55,8 @@ def get_content(request, key):
 
         content = Content(key=key, value=value)
         content.save()
-        content.save()
 
-    elif request.method == "PUT":
+    if request.method == "PUT" and request.user.is_authenticated:
         value = request.body.decode('utf-8')
         try:
             content = Content.objects.get(key=key)
@@ -47,9 +69,11 @@ def get_content(request, key):
 
     try:
         response = Content.objects.get(key=key).value
+        status = 200
     except Content.DoesNotExist:
-        response = 'No existe contenido para la clave ' + value + '\n' + formulario
-    except Content.MultipleObjectsReturned:
-        respuesta = Content.objects.filter(key=key).last().valor
+        response = 'There is no content to the key:  ' + key + '\n'
+        if request.user.is_authenticated:
+            response = response + form
+        status = 404
 
-    return HttpResponse(response)
+    return HttpResponse(response, status=status)
