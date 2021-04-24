@@ -30,12 +30,12 @@ def logout_view(request):
     return redirect("/cms/")
 
 
-def login_view():
+def login_view(request):
     return redirect("/login")
 
 
 @csrf_exempt
-def index():
+def index(request):
     return HttpResponse("You are in the root page.", status=200)
 
 
