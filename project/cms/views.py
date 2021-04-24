@@ -42,31 +42,36 @@ def index(request):
 @csrf_exempt
 def get_content(request, key):
 
-    if request.method == "POST" and request.user.is_authenticated:
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return HttpResponse("Cannot add content with POST. Not logged in. <a href='/login'>Login</a>", status=404)
+        else:
+            value = request.POST['value']
 
-        value = request.POST['value']
+            try:
+                # if the key have been stored in a previous POST, we
+                # remove it and add the new content.
+                content = Content.objects.get(key=key)
+                content.delete()
+            except Content.DoesNotExist:
+                pass
 
-        try:
-            # if the key have been stored in a previous POST, we
-            # remove it and add the new content.
-            content = Content.objects.get(key=key)
-            content.delete()
-        except Content.DoesNotExist:
-            pass
+            content = Content(key=key, value=value)
+            content.save()
 
-        content = Content(key=key, value=value)
-        content.save()
+    if request.method == "PUT":
+        if not request.user.is_authenticated:
+            return HttpResponse("Cannot add content with PUT. Not logged in. <a href='/login'>Login</a>", status=404)
+        else:
+            value = request.body.decode('utf-8')
+            try:
+                content = Content.objects.get(key=key)
+                content.delete()
+            except Content.DoesNotExist:
+                pass
 
-    if request.method == "PUT" and request.user.is_authenticated:
-        value = request.body.decode('utf-8')
-        try:
-            content = Content.objects.get(key=key)
-            content.delete()
-        except Content.DoesNotExist:
-            pass
-
-        content = Content(key=key, value=value)
-        content.save()
+            content = Content(key=key, value=value)
+            content.save()
 
     try:
         response = "Key '" + key + "' value is: " + Content.objects.get(key=key).value + "<br>"
