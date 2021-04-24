@@ -36,8 +36,7 @@ def login_view(request):
 
 @csrf_exempt
 def index(request):
-    return HttpResponse("You are in the root page.")
-
+    return HttpResponse("You are in the root page.", status=200)
 
 @csrf_exempt
 def get_content(request, key):
