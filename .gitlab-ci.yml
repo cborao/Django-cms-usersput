@@ -13,8 +13,8 @@ test:
     - python3 -m venv venv/
     - source venv/bin/activate
     - pip install django
-    - python manage.py makemigrations
-    - python manage.py migrate
+    - python project/manage.py makemigrations
+    - python project/manage.py migrate
     - python project/manage.py test
 
 
