@@ -44,7 +44,9 @@ def get_content(request, key):
 
     if request.method == "POST":
         if not request.user.is_authenticated:
-            return HttpResponse("Cannot add content with POST. Not logged in. <a href='/login'>Login</a>", status=404)
+            return HttpResponse("Cannot add content with POST. "
+                                + "Not logged in. <a href='/login'>"
+                                + "Login</a>", status=404)
         else:
             value = request.POST['value']
 
@@ -61,7 +63,9 @@ def get_content(request, key):
 
     if request.method == "PUT":
         if not request.user.is_authenticated:
-            return HttpResponse("Cannot add content with PUT. Not logged in. <a href='/login'>Login</a>", status=404)
+            return HttpResponse("Cannot add content with PUT. "
+                                + "Not logged in. <a href='/login'>"
+                                + "Login</a>", status=404)
         else:
             value = request.body.decode('utf-8')
             try:
@@ -74,7 +78,8 @@ def get_content(request, key):
             content.save()
 
     try:
-        response = "Key '" + key + "' value is: " + Content.objects.get(key=key).value + "<br>"
+        response = "Key '" + key + "' value is: " \
+                   + Content.objects.get(key=key).value + "<br>"
         status = 200
         if request.user.is_authenticated:
             response += "Logged in as " + request.user.username
